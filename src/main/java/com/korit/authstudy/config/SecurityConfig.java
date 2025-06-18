@@ -22,10 +22,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 요청을 보내는 쪽의 도메인(사이트 주소)
-        corsConfiguration.addAllowedOriginPattern("*");
+        corsConfiguration.addAllowedOriginPattern(CorsConfiguration.ALL);
         // 요청을 보내는 쪽에서 Request, Response HEADER 정보에 대한 제약
-        corsConfiguration.addAllowedHeader("*");
-        // 요청을 보내는 쪽(GET, POST, PUT, DELETE, OPTION 등)
+        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
+        // 요청을 보내는 쪽의 메소드(GET, POST, PUT, DELETE, OPTION 등)
         corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
 
         // 요청 URL(/ali/users )에 대한 CORS 설정 적용을 위해 객체생성
