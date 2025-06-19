@@ -1,17 +1,25 @@
 package com.korit.authstudy.config;
 
+import com.korit.authstudy.filter.StudyFilter;
+import com.korit.authstudy.security.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final StudyFilter studyFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -43,8 +51,14 @@ public class SecurityConfig {
         http.httpBasic(httpBasic -> httpBasic.disable());   // HTTP 프로토콜 기본 로그인 방식 비활성화
         http.logout(logout -> logout.disable());            // 서버사이드 렌더링 로그아웃 방식 비활성화
 
-        // 특정 요청 URL에 대한 권한 섦여
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+//        http.addFilterBefore(studyFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // 특정 요청 URL에 대한 권한 설정
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers("/api/users/login", "/api/users", "/api/users/login/status").permitAll();
+            auth.anyRequest().authenticated();
+        });
 
         // HttpSecurity 객체에 설정한 모든 정보를 기반으로 build하여 SecurityFilterChain 객체를 생성한 후 Bean 등록
 
