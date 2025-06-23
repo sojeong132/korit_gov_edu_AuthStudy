@@ -16,6 +16,8 @@ public class PrincipalUser implements UserDetails {
     private String username;
     @JsonIgnore
     private String password;
+    private String fullName;
+    private String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
